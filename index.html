@@ -139,7 +139,7 @@
     }
   </style>
 </head>
-<body>
+<body onkeydown="handleKey(event)">
   <div class="container">
     <div class="header-bar">
       <img src="https://i.imgur.com/yrkd8i7.png" alt="NAMRIA Logo">
@@ -176,7 +176,7 @@
         <button onclick="toggleLogs()">Show/Hide Attendance Logs</button>
         <button onclick="toggleParticipants()">Show/Hide Registered Participants</button>
         <button onclick="exportCSV()">Export CSV</button>
-        <table id="logTable" class="log-table hidden">
+        <table id="logTable" class="log-table">
           <thead><tr><th>Timestamp</th><th>ID</th><th>Name</th><th>Ceremony</th></tr></thead>
           <tbody id="logBody"></tbody>
         </table>
@@ -188,7 +188,7 @@
 
       <div class="section">
         <h2>Manual Override</h2>
-        <label>ID:</label><input id="manualId" type="text" />
+        <label>Employee ID:</label><input id="manualId" type="text" />
         <label>Name:</label><input id="manualName" type="text" />
         <button onclick="addManualEntry()">Add Record</button>
       </div>
@@ -217,6 +217,7 @@
         if (u === 'admin' && p === 'admin123') {
           document.getElementById('adminLogin').classList.add('hidden');
           document.getElementById('mainPanel').classList.remove('hidden');
+          document.getElementById('logTable').classList.remove('hidden');
         } else {
           showToast('❌ Invalid username or password');
         }
@@ -260,6 +261,17 @@
         document.getElementById('rfid').value = '';
       }
 
+      function handleKey(e) {
+        const active = document.activeElement;
+        if (e.key === 'Enter') {
+          if (document.getElementById('mainPanel').classList.contains('hidden')) {
+            loginAdmin();
+          } else if (active.id === 'rfid') {
+            simulateTap();
+          }
+        }
+      }
+
       function updateLogs() {
         const tbody = document.getElementById('logBody');
         tbody.innerHTML = logs.map(log => `<tr><td>${log.time}</td><td>${log.id}</td><td>${log.name}</td><td>${log.ceremony}</td></tr>`).join('');
@@ -271,8 +283,7 @@
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = 'attendance.csv';
-        a.click();
-      }
+        a.click();n      }
 
       function toggleLogs() {
         document.getElementById('logTable').classList.toggle('hidden');
