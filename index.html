@@ -92,7 +92,9 @@
       margin-bottom: 15px;
     }
     .header-bar img {
-      height: 80px;
+      height: 70px;
+      background-color: #eef2f7;
+      border-radius: 8px;
     }
     .agency-text {
       line-height: 1.4;
@@ -108,12 +110,39 @@
       background-color: #ccc;
       color: black;
     }
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #e63946;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      font-size: 16px;
+    }
+    #toast.show {
+      visibility: visible;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    @keyframes fadein {
+      from { bottom: 0; opacity: 0; }
+      to { bottom: 30px; opacity: 1; }
+    }
+    @keyframes fadeout {
+      from { bottom: 30px; opacity: 1; }
+      to { bottom: 0; opacity: 0; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-bar">
-      <img src="https://i.imgur.com/KK2vtQD.png" alt="NAMRIA Logo">
+      <img src="https://i.imgur.com/yrkd8i7.png" alt="NAMRIA Logo">
       <div class="agency-text">
         REPUBLIC OF THE PHILIPPINES<br>
         <b>NATIONAL MAPPING AND RESOURCE INFORMATION AUTHORITY</b><br>
@@ -129,7 +158,6 @@
       <label>Username:</label><input id="adminUser" type="text" />
       <label>Password:</label><input id="adminPass" type="password" />
       <button onclick="loginAdmin()">Login</button>
-      <div id="loginMsg" class="status"></div>
     </div>
 
     <div id="mainPanel" class="hidden">
@@ -166,6 +194,8 @@
       </div>
     </div>
 
+    <div id="toast"></div>
+
     <script>
       const dummyEmployees = {
         '1001': 'Juan Dela Cruz', '1002': 'Maria Santos', '1003': 'Jose Rizal',
@@ -174,17 +204,21 @@
       };
       const logs = [];
 
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "show";
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+      }
+
       function loginAdmin() {
         const u = document.getElementById('adminUser').value;
         const p = document.getElementById('adminPass').value;
-        const msg = document.getElementById('loginMsg');
         if (u === 'admin' && p === 'admin123') {
           document.getElementById('adminLogin').classList.add('hidden');
           document.getElementById('mainPanel').classList.remove('hidden');
-          msg.innerText = '';
         } else {
-          msg.innerText = 'Invalid credentials';
-          msg.className = 'status error';
+          showToast('❌ Invalid username or password');
         }
       }
 
@@ -194,7 +228,7 @@
       }
 
       function getCeremonyType() {
-        return 'Flag Raising'; // Always simulate as within window for demo
+        return 'Flag Raising';
       }
 
       function simulateTap() {
