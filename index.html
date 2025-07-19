@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>W.A.T.A.W.A.T. Prototype</title>
+  <title>W.A.T.A.W.A.T. Dashboard</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
       background: #eef2f7;
       padding: 20px;
       color: #333;
@@ -17,113 +17,117 @@
     h2 {
       text-align: left;
     }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .header img {
+      height: 70px;
+    }
+    .header .text {
+      line-height: 1.2;
+    }
+    .header .text div:nth-child(2) {
+      font-weight: bold;
+    }
     .container {
-      max-width: 960px;
       margin: auto;
+      padding: 0 20px;
     }
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+    }
+    .login-box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 300px;
+    }
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .login-box input {
+      width: 90%;
+      padding: 8px;
+      margin: 10px 0;
+    }
+    .login-box button {
+      width: 90%;
+      margin-top: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hidden { display: none; }
     .section {
-      background: #ffffff;
+      background: #fff;
       padding: 20px;
-      margin-bottom: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+    .status {
+      font-weight: bold;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    .success { color: green; }
+    .error { color: red; }
     .log-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
     .log-table th, .log-table td {
-      border: 1px solid #ddd;
-      padding: 10px;
+      border: 1px solid #ccc;
+      padding: 8px;
       text-align: left;
     }
     .log-table th {
       background-color: #0077b6;
       color: #fff;
     }
-    .status {
-      font-weight: 600;
-      padding: 12px;
-      margin-top: 15px;
-      border-radius: 6px;
-      text-align: center;
-    }
-    .success {
-      color: #2e7d32;
-      background: #c8e6c9;
-    }
-    .error {
-      color: #c62828;
-      background: #ffcdd2;
-    }
     button {
-      padding: 10px 16px;
+      padding: 8px 12px;
       background: #0077b6;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
-      margin: 5px;
-      transition: background 0.3s;
+      margin-top: 10px;
+      margin-right: 10px;
     }
-    button:hover {
-      background: #005f87;
-    }
-    input {
-      padding: 8px;
+    input, select {
+      padding: 6px;
       margin-top: 5px;
       width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 4px;
     }
     label {
       display: block;
       margin-top: 10px;
     }
-    .hidden {
-      display: none;
-    }
-    .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-    .header-bar img {
-      height: 70px;
-      background-color: #eef2f7;
-      border-radius: 8px;
-    }
-    .agency-text {
-      line-height: 1.4;
-      font-size: 14px;
-      text-align: left;
-    }
-    .agency-text b {
-      font-weight: bold;
-      font-size: 15px;
-    }
-    .logout {
-      float: right;
-      background-color: #ccc;
-      color: black;
-    }
     #toast {
       visibility: hidden;
       min-width: 250px;
-      background-color: #e63946;
-      color: #fff;
+      background-color: #dc3545;
+      color: white;
       text-align: center;
-      border-radius: 6px;
+      border-radius: 4px;
       padding: 16px;
       position: fixed;
       z-index: 1;
       left: 50%;
       bottom: 30px;
       transform: translateX(-50%);
-      font-size: 16px;
     }
     #toast.show {
       visibility: visible;
@@ -137,36 +141,47 @@
       from { bottom: 30px; opacity: 1; }
       to { bottom: 0; opacity: 0; }
     }
+    .logout-btn {
+      float: right;
+      background: #d9534f;
+    }
+    .subtitle {
+      text-align: center;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
   </style>
 </head>
 <body onkeydown="handleKey(event)">
   <div class="container">
-    <div class="header-bar">
+    <div class="header">
       <img src="https://i.imgur.com/yrkd8i7.png" alt="NAMRIA Logo">
-      <div class="agency-text">
-        REPUBLIC OF THE PHILIPPINES<br>
-        <b>NATIONAL MAPPING AND RESOURCE INFORMATION AUTHORITY</b><br>
-        Department of Environment and Natural Resources
+      <div class="text">
+        <div>REPUBLIC OF THE PHILIPPINES</div>
+        <div>NATIONAL MAPPING AND RESOURCE INFORMATION AUTHORITY</div>
+        <div>Department of Environment and Natural Resources</div>
       </div>
     </div>
     <h1 style="text-align:center">W.A.T.A.W.A.T. Prototype</h1>
-    <p style="text-align:center"><em>(Wireless Attendance Tracking Application for Weekly Assembly and Timekeeping)</em><br>NAMRIA RFID-Based Flag Ceremony Attendance System</p>
+    <p class="subtitle">(Wireless Attendance Tracking Application for Weekly Assembly and Timekeeping)<br>NAMRIA RFID-Based Flag Ceremony Attendance System</p>
 
-    <!-- Admin Login -->
-    <div class="section" id="adminLogin">
-      <h2>Admin Login</h2>
-      <label>Username:</label><input id="adminUser" type="text" />
-      <label>Password:</label><input id="adminPass" type="password" />
-      <button onclick="loginAdmin()">Login</button>
+    <div class="login-wrapper" id="adminLogin">
+      <div class="login-box">
+        <h2>Admin Login</h2>
+        <input type="text" id="adminUser" placeholder="Username">
+        <input type="password" id="adminPass" placeholder="Password">
+        <button onclick="loginAdmin()">Login</button>
+      </div>
     </div>
 
     <div id="mainPanel" class="hidden">
-      <button class="logout" onclick="logoutAdmin()">Logout</button>
+      <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
 
       <div class="section">
         <h2>RFID Tap-In</h2>
-        <label>Enter RFID Code:</label>
-        <input type="text" id="rfid" placeholder="e.g., 1001" />
+        <label for="rfid">Enter RFID Code:</label>
+        <input type="text" id="rfid" placeholder="e.g., 1001">
         <button onclick="simulateTap()">Tap In</button>
         <div id="status" class="status"></div>
       </div>
@@ -176,10 +191,12 @@
         <button onclick="toggleLogs()">Show/Hide Attendance Logs</button>
         <button onclick="toggleParticipants()">Show/Hide Registered Participants</button>
         <button onclick="exportCSV()">Export CSV</button>
-        <table id="logTable" class="log-table">
+
+        <table id="logTable" class="log-table hidden">
           <thead><tr><th>Timestamp</th><th>ID</th><th>Name</th><th>Ceremony</th></tr></thead>
           <tbody id="logBody"></tbody>
         </table>
+
         <table id="participantTable" class="log-table hidden">
           <thead><tr><th>RFID Code</th><th>Employee Name</th></tr></thead>
           <tbody id="participantBody"></tbody>
@@ -188,124 +205,129 @@
 
       <div class="section">
         <h2>Manual Override</h2>
-        <label>Employee ID:</label><input id="manualId" type="text" />
-        <label>Name:</label><input id="manualName" type="text" />
+        <label for="manualId">Employee ID:</label>
+        <input type="text" id="manualId">
+        <label for="manualName">Name:</label>
+        <input type="text" id="manualName">
         <button onclick="addManualEntry()">Add Record</button>
       </div>
     </div>
 
     <div id="toast"></div>
-
-    <script>
-      const dummyEmployees = {
-        '1001': 'Juan Dela Cruz', '1002': 'Maria Santos', '1003': 'Jose Rizal',
-        '1004': 'Ana Villanueva', '1005': 'Carlos Reyes', '1006': 'Luis Manzano',
-        '1007': 'Melanie Cruz', '1008': 'Brian Torres', '1009': 'Isabel Mendoza', '1010': 'Ramon Garcia'
-      };
-      const logs = [];
-
-      function showToast(message) {
-        const toast = document.getElementById("toast");
-        toast.textContent = message;
-        toast.className = "show";
-        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
-      }
-
-      function loginAdmin() {
-        const u = document.getElementById('adminUser').value;
-        const p = document.getElementById('adminPass').value;
-        if (u === 'admin' && p === 'admin123') {
-          document.getElementById('adminLogin').classList.add('hidden');
-          document.getElementById('mainPanel').classList.remove('hidden');
-          document.getElementById('logTable').classList.remove('hidden');
-        } else {
-          showToast('❌ Invalid username or password');
-        }
-      }
-
-      function logoutAdmin() {
-        document.getElementById('mainPanel').classList.add('hidden');
-        document.getElementById('adminLogin').classList.remove('hidden');
-      }
-
-      function getCeremonyType() {
-        return 'Flag Raising';
-      }
-
-      function simulateTap() {
-        const rfid = document.getElementById('rfid').value.trim();
-        const name = dummyEmployees[rfid];
-        const now = new Date();
-        const today = now.toLocaleDateString();
-        const time = now.toLocaleString();
-        const ceremony = getCeremonyType();
-        const status = document.getElementById('status');
-
-        if (!name) {
-          status.innerText = 'Unrecognized RFID Code';
-          status.className = 'status error';
-          return;
-        }
-
-        const duplicate = logs.find(log => log.id === rfid && log.date === today && log.ceremony === ceremony);
-        if (duplicate) {
-          status.innerText = 'Duplicate entry';
-          status.className = 'status error';
-          return;
-        }
-
-        logs.push({ time, id: rfid, name, ceremony, date: today });
-        updateLogs();
-        status.innerText = `Success: ${name} - ${ceremony}`;
-        status.className = 'status success';
-        document.getElementById('rfid').value = '';
-      }
-
-      function handleKey(e) {
-        const active = document.activeElement;
-        if (e.key === 'Enter') {
-          if (document.getElementById('mainPanel').classList.contains('hidden')) {
-            loginAdmin();
-          } else if (active.id === 'rfid') {
-            simulateTap();
-          }
-        }
-      }
-
-      function updateLogs() {
-        const tbody = document.getElementById('logBody');
-        tbody.innerHTML = logs.map(log => `<tr><td>${log.time}</td><td>${log.id}</td><td>${log.name}</td><td>${log.ceremony}</td></tr>`).join('');
-      }
-
-      function exportCSV() {
-        const csv = 'Timestamp,ID,Name,Ceremony\n' + logs.map(l => `${l.time},${l.id},${l.name},${l.ceremony}`).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'attendance.csv';
-        a.click();n      }
-
-      function toggleLogs() {
-        document.getElementById('logTable').classList.toggle('hidden');
-      }
-
-      function toggleParticipants() {
-        const table = document.getElementById('participantTable');
-        const tbody = document.getElementById('participantBody');
-        table.classList.toggle('hidden');
-        tbody.innerHTML = Object.entries(dummyEmployees).map(([id, name]) => `<tr><td>${id}</td><td>${name}</td></tr>`).join('');
-      }
-
-      function addManualEntry() {
-        const id = document.getElementById('manualId').value.trim();
-        const name = document.getElementById('manualName').value.trim();
-        if (!id || !name) return alert('Please fill out both fields.');
-        const now = new Date();
-        logs.push({ time: now.toLocaleString(), id, name, ceremony: 'Manual Entry', date: now.toLocaleDateString() });
-        updateLogs();
-        alert('Manual entry added successfully.');
-      }
-    </script>
   </div>
+
+  <script>
+    const dummyEmployees = {
+      '1001': 'Juan Dela Cruz', '1002': 'Maria Santos', '1003': 'Jose Rizal',
+      '1004': 'Ana Villanueva', '1005': 'Carlos Reyes', '1006': 'Luis Manzano',
+      '1007': 'Melanie Cruz', '1008': 'Brian Torres', '1009': 'Isabel Mendoza', '1010': 'Ramon Garcia'
+    };
+    const logs = [];
+
+    function showToast(msg, color = '#dc3545') {
+      const toast = document.getElementById("toast");
+      toast.innerText = msg;
+      toast.style.backgroundColor = color;
+      toast.className = "show";
+      setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
+    }
+
+    function loginAdmin() {
+      const u = document.getElementById('adminUser').value;
+      const p = document.getElementById('adminPass').value;
+      if (u === 'admin' && p === 'admin123') {
+        document.getElementById('adminLogin').classList.add('hidden');
+        document.getElementById('mainPanel').classList.remove('hidden');
+        document.getElementById('logTable').classList.remove('hidden');
+        showToast("✅ Login successful", '#28a745');
+      } else {
+        showToast("❌ Invalid username or password", '#dc3545');
+      }
+    }
+
+    function logoutAdmin() {
+      document.getElementById('mainPanel').classList.add('hidden');
+      document.getElementById('adminLogin').classList.remove('hidden');
+    }
+
+    function simulateTap() {
+      const rfid = document.getElementById('rfid').value.trim();
+      const name = dummyEmployees[rfid];
+      const now = new Date();
+      const today = now.toLocaleDateString();
+      const time = now.toLocaleString();
+      const ceremony = 'Flag Raising';
+      const status = document.getElementById('status');
+
+      if (!name) {
+        status.innerText = 'Unrecognized RFID Code';
+        status.className = 'status error';
+        return;
+      }
+
+      const duplicate = logs.find(log => log.id === rfid && log.date === today && log.ceremony === ceremony);
+      if (duplicate) {
+        status.innerText = 'Duplicate entry';
+        status.className = 'status error';
+        return;
+      }
+
+      logs.push({ time, id: rfid, name, ceremony, date: today });
+      updateLogs();
+      status.innerText = `Success: ${name} - ${ceremony}`;
+      status.className = 'status success';
+      document.getElementById('rfid').value = '';
+    }
+
+    function handleKey(e) {
+      const active = document.activeElement;
+      if (e.key === 'Enter') {
+        if (document.getElementById('mainPanel').classList.contains('hidden')) {
+          loginAdmin();
+        } else if (active.id === 'rfid') {
+          simulateTap();
+        } else if (active.id === 'manualName') {
+          addManualEntry();
+        }
+      }
+    }
+
+    function updateLogs() {
+      const tbody = document.getElementById('logBody');
+      tbody.innerHTML = logs.map(log => `<tr><td>${log.time}</td><td>${log.id}</td><td>${log.name}</td><td>${log.ceremony}</td></tr>`).join('');
+    }
+
+    function toggleLogs() {
+      document.getElementById('logTable').classList.toggle('hidden');
+    }
+
+    function toggleParticipants() {
+      const table = document.getElementById('participantTable');
+      const tbody = document.getElementById('participantBody');
+      table.classList.toggle('hidden');
+      tbody.innerHTML = Object.entries(dummyEmployees)
+        .map(([id, name]) => `<tr><td>${id}</td><td>${name}</td></tr>`).join('');
+    }
+
+    function exportCSV() {
+      const csv = 'Timestamp,ID,Name,Ceremony\n' +
+        logs.map(l => `${l.time},${l.id},${l.name},${l.ceremony}`).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'attendance.csv';
+      a.click();
+    }
+
+    function addManualEntry() {
+      const id = document.getElementById('manualId').value.trim();
+      const name = document.getElementById('manualName').value.trim();
+      if (!id || !name) return alert('Please fill out both fields.');
+      const now = new Date();
+      logs.push({ time: now.toLocaleString(), id, name, ceremony: 'Manual Entry', date: now.toLocaleDateString() });
+      updateLogs();
+      alert('Manual entry added successfully.');
+    }
+  </script>
 </body>
 </html>
