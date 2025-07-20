@@ -181,32 +181,43 @@
       font-style: italic;
     }
     .dashboard {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
     }
-    .dashboard .card {
-      flex: 1;
-      margin: 10px;
-      padding: 25px;
-      background: #e0f2fe;
-      border-left: 6px solid #2563eb;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      text-align: center;
-      transition: transform 0.2s ease;
+    
+    .stat-card {
+      background-color: #f9fafb;
+      border: 1px solid #d1d5db;
+      border-left: 6px solid #64748b;
+      border-radius: 8px;
+      padding: 20px 25px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s ease;
     }
-    .dashboard .card:hover {
-      transform: translateY(-4px);
+    
+    .stat-card:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
     }
-    .dashboard .card h3 {
-      margin: 0;
-      font-size: 24px;
-    }
-    .dashboard .card p {
-      margin: 5px 0 0;
+    
+    .stat-card .label {
       font-size: 14px;
+      color: #4b5563;
+      margin-bottom: 8px;
     }
+    
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    /* Color indicators */
+    .stat-card.primary { border-left-color: #2563eb; }
+    .stat-card.warning { border-left-color: #eab308; }
+    .stat-card.muted { border-left-color: #6b7280; }
+    .stat-card.neutral { border-left-color: #0f172a; }
     @keyframes gradientBG {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -242,21 +253,21 @@
       <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
 
       <div class="dashboard">
-        <div class="card">
-          <h3 id="countTotal">0</h3>
-          <p>Total Records</p>
+        <div class="stat-card neutral">
+          <div class="label">Total Records</div>
+          <div class="value" id="countTotal">0</div>
         </div>
-        <div class="card">
-          <h3 id="countFlagRaising">0</h3>
-          <p>Flag Raising</p>
+        <div class="stat-card primary">
+          <div class="label">Flag Raising</div>
+          <div class="value" id="countFlagRaising">0</div>
         </div>
-        <div class="card">
-          <h3 id="countFlagRetreat">0</h3>
-          <p>Flag Retreat</p>
+        <div class="stat-card warning">
+          <div class="label">Flag Retreat</div>
+          <div class="value" id="countFlagRetreat">0</div>
         </div>
-        <div class="card">
-          <h3 id="countManual">0</h3>
-          <p>Manual Entries</p>
+        <div class="stat-card muted">
+          <div class="label">Manual Entries</div>
+          <div class="value" id="countManual">0</div>
         </div>
       </div>
 
@@ -280,15 +291,15 @@
       <div class="section">
         <h2>Admin Tools</h2>
         <button onclick="toggleLogs()">Show/Hide Attendance Logs</button>
-        <button onclick="toggleParticipants()">Show/Hide Registered Employees</button>
+        <button onclick="toggleEmployees()">Show/Hide Registered Employees</button>
         <button onclick="exportCSV()">Export CSV</button>
         <table id="logTable" class="log-table hidden">
           <thead><tr><th>Timestamp</th><th>Employee ID</th><th>Employee Name</th><th>Ceremony</th></tr></thead>
           <tbody id="logBody"></tbody>
         </table>
-        <table id="participantTable" class="log-table hidden">
+        <table id="employeeTable" class="log-table hidden">
           <thead><tr><th>RFID Code</th><th>Employee Name</th></tr></thead>
-          <tbody id="participantBody"></tbody>
+          <tbody id="employeeBody"></tbody>
         </table>
       </div>
     </div>
@@ -386,11 +397,11 @@
     }
 
     function exportCSV() {
-      const csv = 'Timestamp,ID,Name,Ceremony\n' + logs.map(l => `${l.time},${l.id},${l.name},${l.ceremony}`).join('\n');
+      const csv = 'Timestamp,Employee ID,Employee Name,Ceremony\n' + logs.map(l => `"${l.time}",${l.id},${l.name},${l.ceremony}`).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'attendance.csv';
+      a.download = 'WATAWAT_Attendance_' + new Date().toISOString().slice(0,10) + '.csv';
       a.click();
     }
 
@@ -398,9 +409,9 @@
       document.getElementById('logTable').classList.toggle('hidden');
     }
 
-    function toggleParticipants() {
-      const table = document.getElementById('participantTable');
-      const tbody = document.getElementById('participantBody');
+    function toggleEmployees() {
+      const table = document.getElementById('employeeTable');
+      const tbody = document.getElementById('employeeBody');
       table.classList.toggle('hidden');
       tbody.innerHTML = Object.entries(dummyEmployees).map(([id, name]) => `<tr><td>${id}</td><td>${name}</td></tr>`).join('');
     }
