@@ -222,6 +222,24 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+    .main-content-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .left-column {
+      flex: 1 1 320px;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .right-column {
+      flex: 2 1 600px;
+      min-width: 400px;
+    }
   </style>
 </head>
 <body onkeydown="handleKey(event)">
@@ -272,36 +290,42 @@
         </div>
       </div>
 
-      <div class="section">
-        <h2>RFID Tap-In</h2>
-        <label for="rfid">Enter RFID Code:</label>
-        <input type="text" id="rfid" placeholder="e.g., 1001" />
-        <button onclick="simulateTap()">Tap In</button>
-        <div id="status" class="status"></div>
-      </div>
-
-      <div class="section">
-        <h2>Manual Override</h2>
-        <label for="manualId">Employee ID:</label>
-        <input type="text" id="manualId" />
-        <label for="manualName">Name:</label>
-        <input type="text" id="manualName" />
-        <button onclick="addManualEntry()">Add Record</button>
-      </div>
-
-      <div class="section">
-        <h2>Admin Tools</h2>
-        <button onclick="toggleLogs()">Show/Hide Attendance Logs</button>
-        <button onclick="toggleEmployees()">Show/Hide Registered Employees</button>
-        <button onclick="exportCSV()">Export CSV</button>
-        <table id="logTable" class="log-table hidden">
-          <thead><tr><th>Timestamp</th><th>Employee ID</th><th>Employee Name</th><th>Ceremony</th></tr></thead>
-          <tbody id="logBody"></tbody>
-        </table>
-        <table id="employeeTable" class="log-table hidden">
-          <thead><tr><th>RFID Code</th><th>Employee Name</th></tr></thead>
-          <tbody id="employeeBody"></tbody>
-        </table>
+      <div class="main-content-layout">
+        <div class="left-column">
+          <div class="section">
+            <h2>RFID Tap-In</h2>
+            <label for="rfid">Enter RFID Code:</label>
+            <input type="text" id="rfid" placeholder="e.g., 1001" />
+            <button onclick="simulateTap()">Tap In</button>
+            <div id="status" class="status"></div>
+          </div>
+    
+          <div class="section">
+            <h2>Manual Override</h2>
+            <label for="manualId">Employee ID:</label>
+            <input type="text" id="manualId" />
+            <label for="manualName">Name:</label>
+            <input type="text" id="manualName" />
+            <button onclick="addManualEntry()">Add Record</button>
+          </div>
+    
+          <div class="section">
+            <h2>Admin Tools</h2>
+            <button onclick="toggleLogs()">Show/Hide Attendance Logs</button>
+            <button onclick="toggleEmployees()">Show/Hide Registered Employees</button>
+            <button onclick="exportCSV()">Export CSV</button>
+          </div>
+        </div>
+        <div class="right-column">
+          <table id="logTable" class="log-table hidden">
+            <thead><tr><th>Timestamp</th><th>Employee ID</th><th>Employee Name</th><th>Ceremony</th></tr></thead>
+            <tbody id="logBody"></tbody>
+          </table>
+          <table id="employeeTable" class="log-table hidden">
+            <thead><tr><th>RFID Code</th><th>Employee Name</th></tr></thead>
+            <tbody id="employeeBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
