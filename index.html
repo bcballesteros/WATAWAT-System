@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>W.A.T.A.W.A.T. Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       background: #eef2f7;
       padding: 20px;
       color: #333;
@@ -33,8 +34,14 @@
     .header .text {
       line-height: 1.2;
     }
+    .header .text div:nth-child(1) {
+      font-size: 13px;
+    }
     .header .text div:nth-child(2) {
       font-weight: bold;
+    }
+    .header .text div:nth-child(3) {
+    font-size: 13px;
     }
     .container {
       margin: auto;
@@ -44,7 +51,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 60vh;
+      padding-top: 30px;
+      padding-bottom: 40px;
     }
     .login-box {
       background: white;
@@ -170,22 +178,25 @@
       </div>
     </div>
     <h1 style="text-align:center">W.A.T.A.W.A.T. Prototype</h1>
-    <p class="subtitle">(Wireless Attendance Tracking Application for Weekly Assembly and Timekeeping)<br>NAMRIA RFID-Based Flag Ceremony Attendance System</p>
+    <div class="subtitle">(Wireless Attendance Tracking Application for Weekly Assembly and Timekeeping)<br>NAMRIA RFID-Based Flag Ceremony Attendance System</div>
 
+    <!-- Login Page -->
     <div id="adminLogin" class="login-wrapper">
       <div class="login-box">
         <h2>Admin Login</h2>
-        <input id="adminUser" type="text" placeholder="Username">
-        <input id="adminPass" type="password" placeholder="Password">
+        <input id="adminUser" type="text" placeholder="Username" />
+        <input id="adminPass" type="password" placeholder="Password" />
         <button onclick="loginAdmin()">Login</button>
       </div>
     </div>
 
+    <!-- Main Panel -->
     <div id="mainPanel" class="hidden">
       <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+
       <div class="section">
         <h2>RFID Tap-In</h2>
-        <label>Enter RFID Code:</label>
+        <label for="rfid">Enter RFID Code:</label>
         <input type="text" id="rfid" placeholder="e.g., 1001" />
         <button onclick="simulateTap()">Tap In</button>
         <div id="status" class="status"></div>
@@ -194,10 +205,10 @@
       <div class="section">
         <h2>Admin Tools</h2>
         <button onclick="toggleLogs()">Show/Hide Attendance Logs</button>
-        <button onclick="toggleParticipants()">Show/Hide Registered Participants</button>
+        <button onclick="toggleParticipants()">Show/Hide Registered Employees</button>
         <button onclick="exportCSV()">Export CSV</button>
         <table id="logTable" class="log-table hidden">
-          <thead><tr><th>Timestamp</th><th>ID</th><th>Name</th><th>Ceremony</th></tr></thead>
+          <thead><tr><th>Timestamp</th><th>Employee ID</th><th>Employee Name</th><th>Ceremony</th></tr></thead>
           <tbody id="logBody"></tbody>
         </table>
         <table id="participantTable" class="log-table hidden">
@@ -208,10 +219,8 @@
 
       <div class="section">
         <h2>Manual Override</h2>
-        <label>Employee ID:</label>
-        <input id="manualId" type="text" />
-        <label>Name:</label>
-        <input id="manualName" type="text" />
+        <label>Employee ID:</label><input id="manualId" type="text" />
+        <label>Employee Name:</label><input id="manualName" type="text" />
         <button onclick="addManualEntry()">Add Record</button>
       </div>
     </div>
@@ -227,10 +236,10 @@
     };
     const logs = [];
 
-    function showToast(message, success = false) {
+    function showToast(message, isSuccess = false) {
       const toast = document.getElementById("toast");
       toast.textContent = message;
-      toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
+      toast.style.backgroundColor = isSuccess ? '#28a745' : '#dc3545';
       toast.className = "show";
       setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
     }
@@ -253,17 +262,13 @@
       document.getElementById('adminLogin').classList.remove('hidden');
     }
 
-    function getCeremonyType() {
-      return 'Flag Raising';
-    }
-
     function simulateTap() {
       const rfid = document.getElementById('rfid').value.trim();
       const name = dummyEmployees[rfid];
       const now = new Date();
       const today = now.toLocaleDateString();
       const time = now.toLocaleString();
-      const ceremony = getCeremonyType();
+      const ceremony = 'Flag Raising';
       const status = document.getElementById('status');
 
       if (!name) {
@@ -284,19 +289,6 @@
       status.innerText = `Success: ${name} - ${ceremony}`;
       status.className = 'status success';
       document.getElementById('rfid').value = '';
-    }
-
-    function handleKey(e) {
-      const active = document.activeElement;
-      if (e.key === 'Enter') {
-        if (document.getElementById('mainPanel').classList.contains('hidden')) {
-          loginAdmin();
-        } else if (active.id === 'rfid') {
-          simulateTap();
-        } else if (active.id === 'manualName') {
-          addManualEntry();
-        }
-      }
     }
 
     function updateLogs() {
@@ -332,6 +324,19 @@
       logs.push({ time: now.toLocaleString(), id, name, ceremony: 'Manual Entry', date: now.toLocaleDateString() });
       updateLogs();
       alert('Manual entry added successfully.');
+    }
+
+    function handleKey(e) {
+      const active = document.activeElement;
+      if (e.key === 'Enter') {
+        if (document.getElementById('mainPanel').classList.contains('hidden')) {
+          loginAdmin();
+        } else if (active.id === 'rfid') {
+          simulateTap();
+        } else if (active.id === 'manualName') {
+          addManualEntry();
+        }
+      }
     }
   </script>
 </body>
