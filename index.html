@@ -309,14 +309,14 @@
             <button onclick="addManualEntry()">Add Record</button>
           </div>
     
+        </div>
+        <div class="right-column">
           <div class="section">
             <h2>Admin Tools</h2>
             <button onclick="toggleLogs()">Show/Hide Attendance Logs</button>
             <button onclick="toggleEmployees()">Show/Hide Registered Employees</button>
             <button onclick="exportCSV()">Export CSV</button>
           </div>
-        </div>
-        <div class="right-column">
           <table id="logTable" class="log-table hidden">
             <thead><tr><th>Timestamp</th><th>Employee ID</th><th>Employee Name</th><th>Ceremony</th></tr></thead>
             <tbody id="logBody"></tbody>
