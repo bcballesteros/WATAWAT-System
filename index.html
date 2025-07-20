@@ -171,7 +171,6 @@
       to { bottom: 0; opacity: 0; }
     }
     .logout-btn {
-      float: right;
       background: #d9534f;
     }
     .subtitle {
@@ -250,7 +249,9 @@
 
     <!-- Main Panel -->
     <div id="mainPanel" class="hidden">
-      <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+      <div style="text-align: right; margin-bottom: 10px;">
+        <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+      </div>
 
       <div class="dashboard">
         <div class="stat-card neutral">
