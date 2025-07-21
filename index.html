@@ -95,8 +95,8 @@
     }
     .section input[type="text"],
     .section input[type="password"] {
-      width: 100%;         /* Fills only the inner area (excluding padding) */
-      box-sizing: border-box; /* Important: includes padding/border inside width */
+      width: 100%;
+      box-sizing: border-box;
       margin-bottom: 10px;
     }
     .status {
@@ -350,14 +350,22 @@
       const toast = document.getElementById("toast");
       toast.textContent = message;
       toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
-      toast.className = "show";
-      setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+    
+      // Reset animation
+      toast.classList.remove("show");
+      void toast.offsetWidth; // Reflow to force restart animation
+      toast.classList.add("show");
+    
+      // Auto-hide after animation ends
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000); // Match total duration: 2.5s delay + 0.5s fadeout
     }
 
     function loginAdmin() {
-      const u = document.getElementById('adminUser').value;
-      const p = document.getElementById('adminPass').value;
-      if (u === 'admin' && p === 'admin123') {
+      const usernameInput = document.getElementById('adminUser').value;
+      const passwordInput = document.getElementById('adminPass').value;
+      if (usernameInput === 'admin' && passwordInput === 'admin123') {
         document.getElementById('adminLogin').classList.add('hidden');
         document.getElementById('mainPanel').classList.remove('hidden');
         document.getElementById('logTable').classList.remove('hidden');
@@ -393,7 +401,7 @@
         return;
       }
 
-      const duplicate = logs.find(log => log.id === rfid && log.date === today && log.ceremony === ceremony);
+      const duplicate = logs.find(log => log.employeeId === rfid && log.date === today && log.ceremony === ceremony);
       if (duplicate) {
         status.innerText = 'Duplicate entry';
         status.className = 'status error';
@@ -401,7 +409,7 @@
         return;
       }
 
-      logs.push({ time, id: rfid, name, ceremony, date: today });
+      logs.push({ time, employeeId: rfid, employeeName: name, ceremony, date: today });
       updateLogs();
       updateDashboard();
       status.innerText = `Success: ${name} - ${ceremony}`;
@@ -424,11 +432,11 @@
 
     function updateLogs() {
       const tbody = document.getElementById('logBody');
-      tbody.innerHTML = logs.map(log => `<tr><td>${log.time}</td><td>${log.id}</td><td>${log.name}</td><td>${log.ceremony}</td></tr>`).join('');
+      tbody.innerHTML = logs.map(log => `<tr><td>${log.time}</td><td>${log.employeeId}</td><td>${log.employeeName}</td><td>${log.ceremony}</td></tr>`).join('');
     }
 
     function exportCSV() {
-      const csv = 'Timestamp,Employee ID,Employee Name,Ceremony\n' + logs.map(l => `"${l.time}",${l.id},${l.name},${l.ceremony}`).join('\n');
+      const csv = 'Timestamp,Employee ID,Employee Name,Ceremony\n' + logs.map(l => `"${l.time}",${l.employeeId},${l.employeeName},${l.ceremony}`).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -447,17 +455,21 @@
       tbody.innerHTML = Object.entries(dummyEmployees).map(([id, name]) => `<tr><td>${id}</td><td>${name}</td></tr>`).join('');
     }
 
+    function resetManualEntryForm() {
+      document.getElementById('manualId').value = '';
+      document.getElementById('manualName').value = '';
+    }
+
     function addManualEntry() {
       const id = document.getElementById('manualId').value.trim();
       const name = document.getElementById('manualName').value.trim();
       if (!id || !name) return alert('Please fill out both fields.');
       const now = new Date();
-      logs.push({ time: now.toLocaleString(), id, name, ceremony: 'Manual Entry', date: now.toLocaleDateString() });
+      logs.push({ time: now.toLocaleString(), employeeId: id, employeeName: name, ceremony: 'Manual Entry', date: now.toLocaleDateString() });
       updateLogs();
       updateDashboard();
       alert('Manual entry added successfully.');
-      document.getElementById('manualId').value = '';
-      document.getElementById('manualName').value = '';
+      resetManualEntryForm();
     }
 
     function updateDashboard() {
