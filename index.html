@@ -47,6 +47,38 @@
     .header .text div:nth-child(3) {
       font-size: 13px;
     }
+    .header.logged-in {
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.2); /* soft blue glow */
+      border-bottom: 4px solid #38bdf8; /* brighter blue border */
+      background-color: #f0f9ff; /* slight tint */
+      position: relative;
+    }
+    
+    .header.logged-in::after {
+      content: "ADMIN MODE";
+      position: absolute;
+      top: -10px;
+      right: 15px;
+      background: #2563eb;
+      color: white;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      animation: slideFadeIn 0.8s ease-out forwards;
+    }
+    @keyframes slideFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .container {
       margin: auto;
       padding: 0 20px;
@@ -258,8 +290,8 @@
         <div>Department of Environment and Natural Resources</div>
       </div>
     </div>
-    <h1 style="text-align:center">W.A.T.A.W.A.T. Prototype</h1>
-    <div class="subtitle">(Wireless Attendance Tracking Application for Weekly Assembly and Timekeeping)<br>NAMRIA RFID-Based Flag Ceremony Attendance System</div>
+    <h1 id="mainTitle" style="text-align:center">W.A.T.A.W.A.T. Prototype</h1>
+    <div id="mainSubtitle" class="subtitle">(Wireless Attendance Tracking Application for Weekly Assembly and Timekeeping)<br>NAMRIA RFID-Based Flag Ceremony Attendance System</div>
 
     <!-- Login Page -->
     <div id="adminLogin" class="login-wrapper">
@@ -339,6 +371,11 @@
   </div>
 
   <script>
+    const originalHeaderHTML = `
+      <div>REPUBLIC OF THE PHILIPPINES</div>
+      <div>NATIONAL MAPPING AND RESOURCE INFORMATION AUTHORITY</div>
+      <div>Department of Environment and Natural Resources</div>
+    `;
     const dummyEmployees = {
       '1001': 'Juan Dela Cruz', '1002': 'Maria Santos', '1003': 'Jose Rizal',
       '1004': 'Ana Villanueva', '1005': 'Carlos Reyes', '1006': 'Luis Manzano',
@@ -370,6 +407,21 @@
         document.getElementById('mainPanel').classList.remove('hidden');
         document.getElementById('logTable').classList.remove('hidden');
         updateDashboard();
+        // Update header text after login
+        const headerText = document.querySelector('.header .text');
+        if (headerText) {
+          headerText.innerHTML = `
+            <div style="font-size: 22px; font-weight: 700;">W.A.T.A.W.A.T. Prototype</div>
+            <div>Wireless Attendance Tracking Application for Weekly Assembly and Timekeeping</div>
+            <div>National Mapping and Resource Information Authority</div>
+          `;
+        }
+        document.querySelector('.header').classList.add('logged-in');
+
+        // Hide the main title and subtitle
+        document.getElementById('mainTitle').style.display = 'none';
+        document.getElementById('mainSubtitle').style.display = 'none';
+
         showToast('✅ Login successful', true);
       } else {
         showToast('❌ Invalid username or password');
@@ -378,6 +430,17 @@
 
     function logoutAdmin() {
       document.getElementById('mainPanel').classList.add('hidden');
+      // Restore header to original version
+      const headerText = document.querySelector('.header .text');
+      if (headerText) {
+        headerText.innerHTML = originalHeaderHTML;
+      }
+      document.querySelector('.header').classList.remove('logged-in');
+
+      // Show the main title and subtitle again
+      document.getElementById('mainTitle').style.display = 'block';
+      document.getElementById('mainSubtitle').style.display = 'block';
+      
       document.getElementById('adminLogin').classList.remove('hidden');
     }
 
